@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 **************************************************************************
-*                  Cross_A_Crater (e-Yantra 2016)
+*                  
 *                  ================================
 *  This software is intended to teach image processing concepts
 *	
@@ -32,6 +32,7 @@
 import openpyxl as px
 import numpy as np
 import matplotlib.pyplot as plt
+from lib import *
 print("Ubit Name = jayantso")
 print("personNumber = 50246821")
 
@@ -39,6 +40,7 @@ print("personNumber = 50246821")
 
 # Loading the data from the DataSet
 np.set_printoptions(precision=3)
+# np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 W = px.load_workbook('DataSet/university data.xlsx', use_iterators = True)
 sheet=W.get_sheet_by_name('university_data') #selecting the sheet
 #getting data from the sheet and storing it into numpy array
@@ -103,55 +105,74 @@ print("covarianceMat = \n",covarianceMat)
 correlationMat=np.corrcoef(np.transpose(data))
 print("correlationMat = \n",correlationMat)
 # plotting pairwise columns
-fig1 = plt.figure()
-p12 = fig1.add_subplot(311)
-p12.plot(data[:,0],data[:,1], 'ro')
-plt.title('CS Score (USNews) vs rest three variables')
-plt.ylabel('Research Overhead %')
-plt.xlabel('CS Score (USNews)')
-# for xy in zip(data[:,0], data[:,1]):                                       # <--
-#     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
+# fig1 = plt.figure()
+# p12 = fig1.add_subplot(311)
+# p12.plot(data[:,0],data[:,1], 'ro')
+# plt.title('CS Score (USNews) vs rest three variables')
+# plt.ylabel('Research Overhead %')
+# plt.xlabel('CS Score (USNews)')
+# # for xy in zip(data[:,0], data[:,1]):                                       # <--
+# #     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
 
-p13 = fig1.add_subplot(312)
-p13.plot(data[:,0],data[:,2], 'go')
-plt.ylabel('Admin Base Pay$')
-plt.xlabel('CS Score (USNews)')
+# p13 = fig1.add_subplot(312)
+# p13.plot(data[:,0],data[:,2], 'go')
+# plt.ylabel('Admin Base Pay$')
+# plt.xlabel('CS Score (USNews)')
 
-p14 = fig1.add_subplot(313)
-p14.plot(data[:,0],data[:,3], 'bo')
-plt.ylabel('Tuition(out-state)$')
-plt.xlabel('CS Score (USNews)')
+# p14 = fig1.add_subplot(313)
+# p14.plot(data[:,0],data[:,3], 'bo')
+# plt.ylabel('Tuition(out-state)$')
+# plt.xlabel('CS Score (USNews)')
 
-plt.tight_layout()
-plt.show()
-######################
-fig2 = plt.figure()
-p23 = fig2.add_subplot(211)
-p23.plot(data[:,1],data[:,2], 'ro')
-plt.title('Research Overhead % vs rest two variables')
-plt.ylabel('Admin Base Pay$')
-plt.xlabel('Research Overhead %')
-# for xy in zip(data[:,0], data[:,1]):                                       # <--
-#     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
+# plt.tight_layout()
+# plt.show()
+# ######################
+# fig2 = plt.figure()
+# p23 = fig2.add_subplot(211)
+# p23.plot(data[:,1],data[:,2], 'ro')
+# plt.title('Research Overhead % vs rest two variables')
+# plt.ylabel('Admin Base Pay$')
+# plt.xlabel('Research Overhead %')
+# # for xy in zip(data[:,0], data[:,1]):                                       # <--
+# #     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
 
-p24 = fig2.add_subplot(212)
-p24.plot(data[:,1],data[:,3], 'go')
-plt.ylabel('Tuition(out-state)$')
-plt.xlabel('Research Overhead %)')
+# p24 = fig2.add_subplot(212)
+# p24.plot(data[:,1],data[:,3], 'go')
+# plt.ylabel('Tuition(out-state)$')
+# plt.xlabel('Research Overhead %)')
 
 
-plt.tight_layout()
-plt.show()
-#############
-fig3 = plt.figure()
-p34 = fig3.add_subplot(111)
-p34.plot(data[:,2],data[:,3], 'ro')
-plt.title('Admin Base Pay$  vs Tuition(out-state)$')
-plt.ylabel('Tuition(out-state)$')
-plt.xlabel('Admin Base Pay$')
-# for xy in zip(data[:,0], data[:,1]):                                       # <--
-#     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
+# plt.tight_layout()
+# plt.show()
+# #############
+# fig3 = plt.figure()
+# p34 = fig3.add_subplot(111)
+# p34.plot(data[:,2],data[:,3], 'ro')
+# plt.title('Admin Base Pay$  vs Tuition(out-state)$')
+# plt.ylabel('Tuition(out-state)$')
+# plt.xlabel('Admin Base Pay$')
+# # for xy in zip(data[:,0], data[:,1]):                                       # <--
+# #     p12.annotate('(%s,%s)' % xy, xy=xy, textcoords='data')
 
-plt.tight_layout()
-plt.show()
+# plt.tight_layout()
+# plt.show()
 
+#*********************** End of Task 2 ***************************#
+
+#*********************** Task 3 ***************************#
+
+# vUpf=np.vectorize(Upf, excluded=['mu','sigma'])#optimisation
+logLikelihood=Upf(data[:,0], mu1, sigma1)+Upf(data[:,1], mu2, sigma2)+Upf(data[:,2], mu3, sigma3)+Upf(data[:,3], mu4, sigma4)#calling function to caluclate loglikelihood of univariate 
+# logs=sum(stats.norm.pdf(data))
+print("logLikelihood = ",round(logLikelihood,3))#univariate
+
+muvector=np.zeros((1,4))
+muvector[0,:]=[mu1,mu2,mu3,mu4];#creating mean vector for calculating the multivariate likelihodd
+
+# vMpf=np.vectorize(Mpf, excluded=['muvector','covarianceMat'])#optimisation
+# MulLogLikelihood=sum(vMpf(data, muvector, covarianceMat))
+
+multilogLikelihood=Mpf(data, muvector, covarianceMat)
+print("multilogLikelihood = ",round(multilogLikelihood,3))#multivariate
+
+#*********************** End of Task 3 ***************************#
